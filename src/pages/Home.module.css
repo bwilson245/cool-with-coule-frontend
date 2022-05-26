@@ -1,8 +1,10 @@
 .top_flex_container {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
     flex-direction: row;
     max-width: 1500px;
+    width: 100%;
+    margin: auto;
 }
 .top_flex_container .top_flex_left {
     text-align: center;
@@ -49,6 +51,7 @@
     width: 120px;
     font-size: medium;
     border-radius: 5px;
+    margin: 10px;
 }
 
 .top_flex_container .top_flex_left ul li button:hover {
@@ -69,18 +72,19 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     margin: auto;
     text-align: center;
     margin-top: 100px;
 }
-.content .item {
+.item {
     box-sizing: border-box;
     margin-top: 60px;
     border: solid 2px;
     background-color: white;
     border-radius: 30px;
 }
-.content .item .desc {
+.item .desc {
     max-width: 400px;
 }
 .btn {

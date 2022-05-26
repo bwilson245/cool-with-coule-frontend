@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import classes from "./MainNavigation.module.css";
 import "./resources/Logo-small.png";
-import {  useRef, useState } from "react";
+import { useRef, useState } from "react";
 import axios from "axios";
 import React from "react";
 
@@ -9,23 +9,19 @@ const api = axios.create({
   baseUrl: "https://jsonplaceholder.typicode.com/",
 });
 
-
-
-function MainNavigation(props, { setShowLogin, setShowSignup}) {
+function MainNavigation(props) {
   const input = useRef();
   const [criteria, setCriteria] = useState("");
-  
-  const showLogin = (val) => {
-    console.log(val)
-    // setShowLogin(true);
+
+  function signout() {
+    let customer = localStorage.getItem("customer");
+    if (customer != null) {
+      localStorage.removeItem("customer");
+      alert("logged out");
+    } else {
+      console.log("error");
+    }
   }
-
-  const showSignup = () => {
-    setShowSignup(true);
-  }
-
-
-
 
   return (
     <header className={classes.header}>
@@ -54,6 +50,14 @@ function MainNavigation(props, { setShowLogin, setShowSignup}) {
         ></input>
       </div>
       <ul>
+        <li>
+          <h6>{ }</h6>
+        </li>
+        <li>
+          <Link className={classes.link} to="/" onClick={signout}>
+            Sign Out
+          </Link>
+        </li>
         <li>
           <Link className={classes.link} to="/signup">
             Sign Up

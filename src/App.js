@@ -19,8 +19,10 @@ const productClient = axios.create({
   },
 });
 
-const customerClient = axios.create({
-  baseURL: `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer`,
+
+
+const orderClient = axios.create({
+  baseURL: 'https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/order/',
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
@@ -29,41 +31,46 @@ const customerClient = axios.create({
 
 function App(props) {
   const [content, setContent] = useState([]);
-  const [user, setUser] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
 
   function search(criteria) {
+    setIsLoading(true)
     productClient
       .get(criteria)
       .then((res) => {
         setContent(res.data.products);
         console.log(res.data);
         console.log(criteria);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
         console.log(criteria);
+        setIsLoading(false);
       });
   }
 
-  function searchCustomer(email, password) {
-    let result = customerClient
-      .get("?email=" + email + "&password=" + password)
-      .then((res) => {
-        setUser(res.data.customerModel);
-        console.log(res.data);
-        console.log(email + "?password=" + password);
-      })
-      .catch((err) => {
-        console.log(err);
-        console.log(email + "?password=" + password);
-      });
-  }
+  
+
+  // function searchOrder(orderId) {
+  //   orderClient
+  //   .get(orderId)
+  //   .then((res) => {
+  //     setOrder(res.data.order);
+  //     console.log(res.data);
+  //     console.log(orderId);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //     console.log(orderId);
+  //   });
+  // }
 
   return (
     <div className={classes.main}>
       <MainNavigation className={classes.nav} content={search} />
       <Routes>
-        <Route path="/" element={<Home data={content} content={search} />} />
+        <Route path="/" element={<Home data={content} isLoading={isLoading} />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
