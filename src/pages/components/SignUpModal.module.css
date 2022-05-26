@@ -11,7 +11,7 @@
     max-height: 800px;
     height: 100%;
 }
-.login_box {
+.main {
   justify-content: space-evenly;
   box-sizing: border-box;
   background-color: white;

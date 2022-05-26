@@ -1,32 +1,27 @@
 import classes from "./LoginModal.module.css";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ReactDOM } from "react";
-import axios from "axios";
-import { isLabelWithInternallyDisabledControl } from "@testing-library/user-event/dist/utils";
 import Home from "../Home";
+import axios from "axios";
 
-const portal = document.getElementById("portal");
-
-function LoginModal(props) {
+function LoginModal(props, {show}) {
   const emailInput = useRef();
   const passwordInput = useRef();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [user, setUser] = useState([])
+  const [open, setOpen] = useState(false)
+  
+  
 
-  if (!props.open) {
+  if (!open) {
     return null;
   }
 
-  function submitHandler() {
-    console.log("submit");
-    props.login(email, password);
-    props.open = false;
-  }
-
-  function cancelHandler() {
-    props.open = false;
-  }
+   const preventRefresh = (e) => {
+     e.preventDefault();
+     console.log("refresh prevented");
+   };
 
   function saveToLocalStorage(customerId) {
     window.localStorage.setItem("customerId", customerId);
@@ -35,7 +30,7 @@ function LoginModal(props) {
     <>
       {/* <div className={classes.overlay}></div> */}
       <div className={classes.main}>
-        <form className={classes.login_box}>
+        <form className={classes.login_box} onSubmit={preventRefresh}>
           <div className={classes.top}>
             <h1>Log In</h1>
             <label>Email</label>
@@ -60,12 +55,14 @@ function LoginModal(props) {
             <p>Remember Me</p>
           </div>
           <div className={classes.bot}>
-            <button className={classes.btn} onClick={submitHandler}>Submit
-              <Link to={Home}></Link>
+            <button
+              className={classes.btn}
+              onClick={() => props.login(email, password)}
+            >
+              Submit
             </button>
-
-            <button className={classes.btn} onClick={cancelHandler}>Cancel
-              <Link to={Home}></Link>
+            <button className={classes.btn} onClick={show}>
+              Cancel
             </button>
           </div>
         </form>
