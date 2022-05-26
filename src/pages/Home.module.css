@@ -83,3 +83,14 @@
 .content .item .desc {
     max-width: 400px;
 }
+.btn {
+    width: 100px;
+    height: 30px;
+    background-color: rgb(0, 0, 48);
+    color: white;
+    margin: 10px
+}
+.btn:hover {
+    font-style: italic;
+    color:rgb(109, 109, 109)
+}

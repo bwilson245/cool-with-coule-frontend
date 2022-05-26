@@ -1,8 +1,26 @@
+import { useState } from "react";
 import classes from "./Home.module.css";
-
 
 function Home(props) {
 
+
+  function saveToCart(product) {
+    var cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    let productExists = false;
+    for (let i = 0; i < cart.length; i++){
+      if (cart[i].name == product.name) {
+        console.log("cart: ", cart[i])
+        cart[i].quantity += 1;
+        productExists = true;
+        console.log("cart after: ", cart[i])
+      }
+    }
+    if (!productExists) {
+      product.quantity = 1;
+      cart.push(product);
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
 
   const productsJsx = props.data.map((product) => (
     <div key={product.name} className={classes.item}>
@@ -13,6 +31,9 @@ function Home(props) {
       <br />
       <div className={classes.desc}>{product.description}</div>
       <div className={classes.price}>${product.priceInCents / 100}</div>
+      <button className={classes.btn} onClick={() => saveToCart(product)}>
+        Add to Cart
+      </button>
     </div>
   ));
   return (

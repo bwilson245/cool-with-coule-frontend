@@ -11,9 +11,21 @@ const api = axios.create({
 
 
 
-function MainNavigation(props) {
+function MainNavigation(props, { setShowLogin, setShowSignup}) {
   const input = useRef();
   const [criteria, setCriteria] = useState("");
+  
+  const showLogin = (val) => {
+    console.log(val)
+    // setShowLogin(true);
+  }
+
+  const showSignup = () => {
+    setShowSignup(true);
+  }
+
+
+
 
   return (
     <header className={classes.header}>
@@ -43,14 +55,14 @@ function MainNavigation(props) {
       </div>
       <ul>
         <li>
-          <a className={classes.link} onClick={props.openSignUpModal}>
+          <Link className={classes.link} to="/signup">
             Sign Up
-          </a>
+          </Link>
         </li>
         <li>
-          <a className={classes.link} onClick={props.openLoginModal}>
+          <Link className={classes.link} to="/login">
             Log In
-          </a>
+          </Link>
         </li>
         <li>
           <Link className={classes.link} to="/account">
