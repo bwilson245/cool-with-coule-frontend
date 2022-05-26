@@ -2,15 +2,28 @@ import classes from "./Cart.module.css";
 import { useRef, useState } from "react";
 import userEvent from "@testing-library/user-event";
 import mockCart from "./mock-cart.json";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SwishSpinner } from "react-spinners-kit";
+import axios from "axios";
+
+
+const orderClient = axios.create({
+  baseURL:
+    "https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/postcheckout/%7BcustomerId%7D",
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+});
+
 
 function Cart(props) {
+  const navigate = useNavigate();
   const input = useRef();
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")));
   const user = localStorage.getItem("customer");
   const [isLoading, setIsLoading] = useState(false);
-  const [orderPlaced, setOrderPlaced] = useState(true);
+  const [orderPlaced, setOrderPlaced] = useState(false);
 
   function modItem(item, value) {
     console.log(item);
@@ -42,8 +55,49 @@ function Cart(props) {
     setCart(newCart);
   }
 
-  function saveToStorage() {
-    sessionStorage.setItem("order", JSON.stringify(cart));
+  function buildOrder() {
+    let order = []
+    for (let i = 0; i < cart.length; i++) {
+      order.push({
+        "name": cart[i].name,
+        "quantity": cart[i].quantity
+      })
+    }
+    console.log(order)
+    checkout(order)
+  }
+
+
+  function checkout(order) {
+    setIsLoading(true)
+    let customer = localStorage.getItem("customer");
+
+
+    let request = orderClient
+      .post(
+        `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/postcheckout/` + customer.customerId,
+        order
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.data.customerModel == null) {
+          setIsLoading(false);
+          return alert(res.data.responseStatus.message);
+        }
+        sessionStorage.setItem("order", JSON.stringify(cart));
+        console.log(res.data);
+        setIsLoading(false);
+        return navigate("/checkout");
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    
+    axios.interceptors.request.use((request) => {
+      console.log("Starting Request", JSON.stringify(request, null, 2));
+      return request;
+    });
   }
 
   return (
@@ -100,18 +154,12 @@ function Cart(props) {
             </table>
           </div>
           <div className={classes.bot_data}>
-            {isLoading && !orderPlaced ? (
+            {isLoading ? (
               <div className={classes.icon}>
                 <SwishSpinner />
               </div>
             ) : null}
-            {!isLoading && orderPlaced ? (
-              <div className={classes.order_confirm}>
-                <p>Your order has been placed!</p>
-                <Link to="/order">View your order</Link>
-              </div>
-            ) : null}
-            {!isLoading && !orderPlaced ? (
+            {!isLoading ? (
               <div className={classes.order_data}>
                 <p>
                   total price : $
@@ -120,8 +168,7 @@ function Cart(props) {
                     0
                   ) / 100}
                 </p>
-                <Link to="/checkout"></Link>
-                <button onClick={saveToStorage}>Submit Order</button>
+                <button onClick={buildOrder}>Submit Order</button>
               </div>
             ) : null}
           </div>
