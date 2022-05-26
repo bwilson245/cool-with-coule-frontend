@@ -21,6 +21,14 @@ const productClient = axios.create({
 
 
 
+const orderClient = axios.create({
+  baseURL: 'https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/order/',
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+});
+
 function App(props) {
   const [content, setContent] = useState([]);
 
@@ -39,6 +47,20 @@ function App(props) {
   }
 
   
+
+  // function searchOrder(orderId) {
+  //   orderClient
+  //   .get(orderId)
+  //   .then((res) => {
+  //     setOrder(res.data.order);
+  //     console.log(res.data);
+  //     console.log(orderId);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //     console.log(orderId);
+  //   });
+  // }
 
   return (
     <div className={classes.main}>
