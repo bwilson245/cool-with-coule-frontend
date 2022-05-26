@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import axios from "axios";
 import classes from "./App.module.css";
+import Checkout from "./pages/Checkout"
 
 import Home from "./pages/Home";
 import MainNavigation from "./pages/components/MainNavigation";
@@ -60,15 +61,13 @@ function App(props) {
 
   return (
     <div className={classes.main}>
-      <MainNavigation
-        className={classes.nav}
-        content={search}
-      />
+      <MainNavigation className={classes.nav} content={search} />
       <Routes>
         <Route path="/" element={<Home data={content} content={search} />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Routes>
       <MainFooter className={classes.footer} />
     </div>
