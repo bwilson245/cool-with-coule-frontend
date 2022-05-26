@@ -1,18 +1,27 @@
 import { useState } from "react";
 import classes from "./Home.module.css";
+import { SwishSpinner } from "react-spinners-kit";
+import axios from "axios";
+
+const productClient = axios.create({
+  baseURL: `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/products`,
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+});
 
 function Home(props) {
-
-
+  
   function saveToCart(product) {
     var cart = JSON.parse(localStorage.getItem("cart") || "[]");
     let productExists = false;
-    for (let i = 0; i < cart.length; i++){
+    for (let i = 0; i < cart.length; i++) {
       if (cart[i].name == product.name) {
-        console.log("cart: ", cart[i])
+        console.log("cart: ", cart[i]);
         cart[i].quantity += 1;
         productExists = true;
-        console.log("cart after: ", cart[i])
+        console.log("cart after: ", cart[i]);
       }
     }
     if (!productExists) {
@@ -22,7 +31,8 @@ function Home(props) {
     localStorage.setItem("cart", JSON.stringify(cart));
   }
 
-  const productsJsx = props.data.map((product) => (
+
+  let productsJsx = props.data.map((product) => (
     <div key={product.name} className={classes.item}>
       <div className={classes.img}>
         <img src={product.imageUrl} height="250" />
@@ -47,17 +57,26 @@ function Home(props) {
           <p>Now you can, with CoolWithCoule!</p>
           <ul>
             <li>
-              <button onClick={() => props.content("?name=apron")}>
+              <button
+                className={classes.bot_btn}
+                onClick={() => props.content("?name=apron")}
+              >
                 Aprons
               </button>
             </li>
             <li>
-              <button onClick={() => props.content("?name=tea towel")}>
+              <button
+                className={classes.bot_btn}
+                onClick={() => props.content("?name=tea towel")}
+              >
                 Tea Towels
               </button>
             </li>
             <li>
-              <button onClick={() => props.content("?name=oven mitt")}>
+              <button
+                className={classes.bot_btn}
+                onClick={() => props.content("?name=oven mitt")}
+              >
                 Oven Mits
               </button>
             </li>
@@ -72,7 +91,11 @@ function Home(props) {
           />
         </div>
       </div>
-      <div className={classes.content}>{productsJsx}</div>
+
+      <div className={classes.content}>
+        <SwishSpinner loading={props.isLoading} className={classes.icon} />
+        {productsJsx}
+      </div>
     </>
   );
 }

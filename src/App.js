@@ -31,18 +31,22 @@ const orderClient = axios.create({
 
 function App(props) {
   const [content, setContent] = useState([]);
+  const [isLoading, setIsLoading] = useState(false)
 
   function search(criteria) {
+    setIsLoading(true)
     productClient
       .get(criteria)
       .then((res) => {
         setContent(res.data.products);
         console.log(res.data);
         console.log(criteria);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
         console.log(criteria);
+        setIsLoading(false);
       });
   }
 
@@ -66,7 +70,7 @@ function App(props) {
     <div className={classes.main}>
       <MainNavigation className={classes.nav} content={search} />
       <Routes>
-        <Route path="/" element={<Home data={content} content={search} />} />
+        <Route path="/" element={<Home data={content} isLoading={isLoading} />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />

@@ -1,7 +1,8 @@
 import classes from "./Signup.module.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useRef, useState } from "react";
+import { SwishSpinner } from "react-spinners-kit";
 
 const customerClient = axios.create({
   baseURL: `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer`,
@@ -12,6 +13,7 @@ const customerClient = axios.create({
 });
 
 function Signup() {
+  const navigate = useNavigate();
   let nameInput = useRef();
   let emailInput = useRef();
   let passwordInput = useRef();
@@ -27,8 +29,10 @@ function Signup() {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zipcode, setZipcode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   function createCustomer() {
+    setIsLoading(true)
     let customer = {
       email: email,
       name: name,
@@ -38,22 +42,15 @@ function Signup() {
       zipcode: zipcode,
       password: password,
     };
-
-    console.log(customer.name)
-    console.log(customer.email);
-    console.log(customer.password);
-    console.log(customer.address);
-    console.log(customer.city);
-    console.log(customer.state);
-    console.log(customer.zipcode);
-
     customerClient
       .post(
-        `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer`
-      , JSON.stringify(customer))
+        `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer`,
+        JSON.stringify(customer)
+      )
       .then((res) => {
         console.log(res);
         if (res.data.customerModel == null) {
+          setIsLoading(false);
           return alert(res.data.responseStatus.message);
         }
         localStorage.setItem(
@@ -61,9 +58,12 @@ function Signup() {
           JSON.stringify(res.data.customerModel)
         );
         console.log(res.data);
+        setIsLoading(false);
+        return navigate("/");
       })
       .catch((err) => {
         console.log(err);
+        setIsLoading(false);
       });
   }
 
@@ -120,12 +120,20 @@ function Signup() {
           ref={zipcodeInput}
           onChange={() => setZipcode(zipcodeInput.current.value)}
         />
+        <SwishSpinner loading={isLoading} />
         <div className={classes.btn}>
-          <Link to="/" onClick={createCustomer}>
-            <button className={classes.signin}>Create</button>
-          </Link>
+          <button
+            disabled={isLoading}
+            className={classes.signin}
+            onClick={createCustomer}
+          >
+            Create
+          </button>
+
           <Link to="/">
-            <button className={classes.cancel}>Cancel</button>
+            <button disabled={isLoading} className={classes.cancel}>
+              Cancel
+            </button>
           </Link>
         </div>
       </div>

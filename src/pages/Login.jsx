@@ -1,7 +1,9 @@
-import classes from "./Signup.module.css";
+import classes from "./Login.module.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { SwishSpinner } from "react-spinners-kit";
 
 const customerClient = axios.create({
   baseURL: `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer`,
@@ -11,28 +13,35 @@ const customerClient = axios.create({
   },
 });
 
-
-
 function Login() {
+  const navigate = useNavigate();
   let emailInput = useRef();
   let passwordInput = useRef();
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   function searchCustomer(email, password) {
+    setIsLoading(true);
     let result = customerClient
       .get("?email=" + email + "&password=" + password)
       .then((res) => {
-        console.log(res)
+        console.log(res);
         if (res.data.customerModel == null) {
           return alert(res.data.responseStatus.message);
         }
-        localStorage.setItem("customer", JSON.stringify(res.data.customerModel))
+        localStorage.setItem(
+          "customer",
+          JSON.stringify(res.data.customerModel)
+        );
         console.log(res.data);
+        setIsLoading(true);
+        return navigate("/");
       })
       .catch((err) => {
+        setIsLoading(true);
         console.log(err);
-        alert("Error")
+        alert("Error");
       });
   }
   return (
@@ -53,15 +62,29 @@ function Login() {
           ref={passwordInput}
           onChange={() => setPassword(passwordInput.current.value)}
         />
+        <div className={classes.icon}>
+          <SwishSpinner loading={isLoading} />
+        </div>
         <div className={classes.btn}>
-          <button className={classes.signin} onClick={() => searchCustomer(email, password)}>
+          <button
+            className={classes.signin}
+            onClick={() => searchCustomer(email, password)}
+            disabled={isLoading}
+          >
             Sign in
           </button>
-          <button className={classes.cancel}>Cancel</button>
+
+          <Link className={classes.link} to="/">
+            <button className={classes.cancel} disabled={isLoading}>
+              Cancel
+            </button>
+          </Link>
         </div>
-        <Link className={classes.link} to="/login">
-          Dont have an account?
-        </Link>
+        {isLoading ? null : (
+          <Link className={classes.link} to="/signup">
+            Dont have an account?
+          </Link>
+        )}
       </div>
     </>
   );
