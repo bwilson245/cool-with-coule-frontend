@@ -56,13 +56,19 @@ function Cart(props) {
   }
 
   function buildOrder() {
-    let order = []
+    let customer = JSON.parse(localStorage.getItem("customer"));
+    let order = {
+      "customerId": customer.customerId,
+      "cart": []
+    }
     for (let i = 0; i < cart.length; i++) {
-      order.push({
-        "name": cart[i].name,
-        "quantity": cart[i].quantity
+      let name = cart[i].name
+      let quantity = cart[i].quantity
+      order.cart.push({
+        name: quantity
       })
     }
+    console.log(customer)
     console.log(order)
     checkout(order)
   }
@@ -70,10 +76,10 @@ function Cart(props) {
 
   function checkout(order) {
     setIsLoading(true)
-    let customer = localStorage.getItem("customer");
+    let customer = JSON.parse(localStorage.getItem("customer"));
 
 
-    let request = orderClient
+    orderClient
       .post(
         `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/postcheckout/` + customer.customerId,
         order
@@ -93,11 +99,6 @@ function Cart(props) {
         console.log(err);
         setIsLoading(false);
       });
-    
-    axios.interceptors.request.use((request) => {
-      console.log("Starting Request", JSON.stringify(request, null, 2));
-      return request;
-    });
   }
 
   return (
