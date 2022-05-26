@@ -3,6 +3,7 @@ import axios from "axios";
 import classes from "./App.module.css";
 import Checkout from "./pages/Checkout"
 
+import Account from "./pages/Account"
 import Home from "./pages/Home";
 import MainNavigation from "./pages/components/MainNavigation";
 import MainFooter from "./pages/components/MainFooter";
@@ -70,11 +71,11 @@ function App(props) {
     <div className={classes.main}>
       <MainNavigation className={classes.nav} content={search} />
       <Routes>
-        <Route path="/" element={<Home data={content} isLoading={isLoading} />} />
+        <Route path="/" element={<Home data={content} isLoading={isLoading} content={search} />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/order" element={<Checkout />} />
       </Routes>
       <MainFooter className={classes.footer} />
     </div>
