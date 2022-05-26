@@ -1,55 +1,64 @@
 import classes from "./Checkout.module.css";
-
-const testOrder = [{"order":{"orderId":"test-id","productNames":["baby yoda oven mitt"],"orderDate":1653428474242,"customerId":"dummy-id"}
-,"responseStatus":{"code":200,"message":"[SUCCESS] Good job everything is working great."}}]
-
-
-let tableIsRendered = false;
-const getOrder = () => {
-  if (JSON.parse(sessionStorage.getItem("order") != null)) {
-    tableIsRendered = true;
-    console.log("Order was found in session storage");
-  } else {
-    console.log("Order was not found in session storage");
-  }
-};
+import { useNavigate } from "react-router-dom";
 
 
 function Checkout() {
-  //var order = JSON.parse(sessionStorage.getItem("order"));
-  var order = testOrder;
-  if (order != null) {
-    const orderProductsArray = order.productNames;
-    //i want to create a string of all the productNames by using .join(" ") but it's giving errors.  //TODO
+  const navigate = useNavigate();
+  let order = JSON.parse(sessionStorage.getItem("order"));
+  let orderProductsNames;
+
+  function addTestOrderToSessionStorage() {
+    let testOrder = [{"order":{"orderId":"ca89ae16-f485-4531-9df1-b3a6e08698b1","productNames":["baby yoda oven mitt","donut give up apron","this is my jam tea towel"],"orderDate":1653428454242,"customerId":"dummy-id"}
+  ,"responseStatus":{"code":200,"message":"[SUCCESS] Good job everything is working great."}}];
+    sessionStorage.setItem("order", JSON.stringify(testOrder));
+    console.log("added testOrder to session storage");
+    window.location.reload();
   }
+
+  if (order == null) {
+    return (<div>
+      <title>Checkout Error</title>
+      <div className={classes.errorbox}>
+      <h1>beep boop. . .</h1>
+      <p>There was an error retrieving your order</p>
+      <button className={classes.reviewbutton} onClick={() => navigate('/')}>Go Home</button>
+      <br></br>
+      </div>
+      <p><button className={classes.reviewbutton} onClick={addTestOrderToSessionStorage}>Add example order to browser session storage</button></p>
+    </div>);
+  } else {
+    orderProductsNames = order[0].order.productNames.join("\n");
+    let date = new Date(order[0].order.orderDate);
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    order[0].order.orderDate = mm + '/' + dd + '/' + yyyy;
+
     return (
-        <div>
+        <div> 
           <title>Checkout Successful</title>
             <div className={classes.checkoutbox}>
               <h1>Checkout Complete!</h1>
               <p>Your order is on its way!</p>
-              <button className={classes.reviewbutton}
-               onClick={getOrder}>
-                   Click here to view your order</button>
-            </div>
-            <h2>test</h2>
-            {tableIsRendered && <div>
+                   <h2>Order Info</h2>
               <table>
               <tr>
                 <th>Order Id</th>
                 <th>Order Date</th>
+                <th>Products</th>
               </tr>
               <tbody>
                 <tr>
-                  ${order.orderId}
-                  ${order.orderDate}
+                  <td><h4>{order[0].order.orderId}</h4></td>
+                  <td><h3>{order[0].order.orderDate}</h3></td>
+                  <td><h4>{orderProductsNames}</h4></td>
                 </tr>
               </tbody>
             </table> 
-            </div>}
+            </div>
         </div>
-        
       );
+  }
 }
 
 export default Checkout;
