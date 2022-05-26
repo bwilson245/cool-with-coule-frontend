@@ -14,6 +14,7 @@
     flex-direction: column;
     justify-content: center;
     margin:auto;
+    margin-top: 60px;
     padding: auto;
 }
 .login {
@@ -26,6 +27,7 @@ input[type="text"] {
     width: 60%;
     padding: 15px;
     margin: 5px;
+    height: 10px;
     display: inline-block;
     border-color: black;
     border-width: 1px;

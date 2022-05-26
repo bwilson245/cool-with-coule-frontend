@@ -19,17 +19,10 @@ const productClient = axios.create({
   },
 });
 
-const customerClient = axios.create({
-  baseURL: `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer`,
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-});
+
 
 function App(props) {
   const [content, setContent] = useState([]);
-  const [user, setUser] = useState([])
 
   function search(criteria) {
     productClient
@@ -45,19 +38,7 @@ function App(props) {
       });
   }
 
-  function searchCustomer(email, password) {
-    let result = customerClient
-      .get("?email=" + email + "&password=" + password)
-      .then((res) => {
-        setUser(res.data.customerModel);
-        console.log(res.data);
-        console.log(email + "?password=" + password);
-      })
-      .catch((err) => {
-        console.log(err);
-        console.log(email + "?password=" + password);
-      });
-  }
+  
 
   return (
     <div className={classes.main}>

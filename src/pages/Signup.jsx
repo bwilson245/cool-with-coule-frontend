@@ -2,6 +2,7 @@ import classes from "./Signup.module.css"
 import { Link } from "react-router-dom";
 
 function Signup() {
+  
 
     return (
       <>
@@ -22,8 +23,12 @@ function Signup() {
           <label className={classes.label}>Zip Code</label>
           <input type="text" placeholder="Zip Code" />
           <div className={classes.btn}>
-            <button className={classes.signin}>Sign in</button>
-            <button className={classes.cancel}>Cancel</button>
+            <Link to="/">
+              <button className={classes.signin}>Sign in</button>
+            </Link>
+            <Link to="/">
+              <button className={classes.cancel}>Cancel</button>
+            </Link>
           </div>
         </div>
       </>
