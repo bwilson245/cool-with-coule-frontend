@@ -5,13 +5,13 @@ import { useEffect, useRef, useState } from "react";
 import { SwishSpinner } from "react-spinners-kit";
 
 
-// const customerClient = axios.create({
-//     baseURL: '',
-//     headers: {
-//         Accept: "application/json",
-//         "Content-Type": "application/json",
-//     },
-// });
+const customerClient = axios.create({
+    baseURL: 'https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer/',
+    headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+    },
+});
 
 
 function Account() {
@@ -34,11 +34,14 @@ function Account() {
     const [isLoading, setIsLoading] = useState(false);
     
 
-  
 
+  
     function updateCustomer() {
         setIsLoading(true)
-        let customer = {
+        let customer = JSON.parse(localStorage.getItem("customer"))
+        let id = customer.customerId
+        let jsonFile = {
+            customerId: id,
             email: email,
             name: name,
             address: address,
@@ -54,52 +57,18 @@ function Account() {
                 alert("Values cannot be blank")
             }
         })
+        customerClient.put('https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer/'+ id,
+        JSON.stringify(jsonFile)).then(res => {
+          console.log(res.data)
+          setIsLoading(false)
+        })
+        .catch(err => {
+          console.log(err)
+          setIsLoading(false)
+          alert("Something went wrong, try again")
+        })
 
-        const updateCustomer = {
-            method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({title: 'PUTCustomerRequest'})
-        };
-
-        fetch('https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer/{id}', updateCustomer)
-        .then(Response => Response.json())
-        .then(data => this.setState
-            ({id:data.id}))
-        }
-
-        // let customerInfo = JSON.parse(localStorage.getCustomer("customer"));
-        // for (let i = 0; i < customer.length; i++) {
-        //   if (customer[i].name == customerInfo.name) {
-        //     customer[i].name = parseString(customerInfo.name);
-        //     if (customer[i].name == " ") {
-        //       return null;
-        //     }
-        //   }
-        // }
-        // const str = ' ';
-        // if (typeof str === 'string' && str.trim().length === 0) {
-        //     console.log('empty');
-        // } else {
-        //     console.log('not empty');
-        // }
-        // setIsLoading(false);
-
-        // customer.map(customerInfo) {
-        //     customerInfo.name 
-        //     //check that all values are not == to an empty string
-        //     return alert("Damn");
-        // }
-        // customerClient
-        //  .put(
-        //      'https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer/{id}'
-        //      JSON.stringify
-        //      prod/customer/ + customer.customerid
-        // ? name = 
-
-
-
-        //  )
-        
+      }
     
     return (
         <>
