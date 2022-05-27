@@ -27,37 +27,45 @@ function Checkout() {
       <p><button className={classes.reviewbutton} onClick={addTestOrderToSessionStorage}>Add example order to browser session storage</button></p>
     </div>);
   } else {
-    orderProductsNames = order[0].order.productNames.join("\n");
-    let date = new Date(order[0].order.orderDate);
+    orderProductsNames = order.productNames.join("\n");
+    let date = new Date(order.orderDate);
     const dd = String(date.getDate()).padStart(2, '0');
     const mm = String(date.getMonth() + 1).padStart(2, '0');
     const yyyy = date.getFullYear();
-    order[0].order.orderDate = mm + '/' + dd + '/' + yyyy;
+    order.orderDate = mm + '/' + dd + '/' + yyyy;
 
     return (
-        <div> 
-          <title>Checkout Successful</title>
-            <div className={classes.checkoutbox}>
-              <h1>Checkout Complete!</h1>
-              <p>Your order is on its way!</p>
-                   <h2>Order Info</h2>
-              <table>
+      <div>
+        <title>Checkout Successful</title>
+        <div className={classes.checkoutbox}>
+          <h1>Checkout Complete!</h1>
+          <p>Your order is on its way!</p>
+          <h2>Order Info</h2>
+          <table>
+            <tbody>
               <tr>
                 <th>Order Id</th>
                 <th>Order Date</th>
                 <th>Products</th>
               </tr>
-              <tbody>
-                <tr>
-                  <td><h4>{order[0].order.orderId}</h4></td>
-                  <td><h3>{order[0].order.orderDate}</h3></td>
-                  <td><h4>{orderProductsNames}</h4></td>
-                </tr>
-              </tbody>
-            </table> 
-            </div>
+            </tbody>
+            <tbody>
+              <tr>
+                <td>
+                  <h4>{order.orderId}</h4>
+                </td>
+                <td>
+                  <h3>{order.orderDate}</h3>
+                </td>
+                <td>
+                  <h4>{orderProductsNames}</h4>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      );
+      </div>
+    );
   }
 }
 
