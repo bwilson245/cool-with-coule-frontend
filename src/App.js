@@ -75,7 +75,7 @@ function App(props) {
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/order" element={<Checkout />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Routes>
       <MainFooter className={classes.footer} />
     </div>

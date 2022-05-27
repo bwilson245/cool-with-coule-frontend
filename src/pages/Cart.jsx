@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { SwishSpinner } from "react-spinners-kit";
 import axios from "axios";
 
-
 const orderClient = axios.create({
   baseURL:
     "https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/postcheckout/%7BcustomerId%7D",
@@ -15,7 +14,6 @@ const orderClient = axios.create({
     "Content-Type": "application/json",
   },
 });
-
 
 function Cart(props) {
   const navigate = useNavigate();
@@ -56,43 +54,43 @@ function Cart(props) {
   }
 
   function buildOrder() {
+
+    console.log(cart)
     let customer = JSON.parse(localStorage.getItem("customer"));
+    let id = customer.customerId
     let order = {
-      "customerId": customer.customerId,
+      "customerId": id,
       "cart": []
     }
+
     for (let i = 0; i < cart.length; i++) {
-      let name = cart[i].name
-      let quantity = cart[i].quantity
-      order.cart.push({
-        name: quantity
-      })
+      order.cart.push(cart[i])
     }
-    console.log(customer)
+
     console.log(order)
-    checkout(order)
+    console.log(JSON.stringify(order))
+    checkout(order);
   }
 
-
   function checkout(order) {
-    setIsLoading(true)
+    setIsLoading(true);
     let customer = JSON.parse(localStorage.getItem("customer"));
-
-
     orderClient
       .post(
-        `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/postcheckout/` + customer.customerId,
-        order
+        `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/postcheckout/` +
+          customer.customerId,
+        JSON.stringify(order)
       )
       .then((res) => {
         console.log(res);
-        if (res.data.customerModel == null) {
+        if (res.data.orderModel == null) {
           setIsLoading(false);
           return alert(res.data.responseStatus.message);
         }
-        sessionStorage.setItem("order", JSON.stringify(cart));
+        sessionStorage.setItem("order", JSON.stringify(res.data.orderModel));
         console.log(res.data);
         setIsLoading(false);
+        localStorage.removeItem("cart")
         return navigate("/checkout");
       })
       .catch((err) => {
@@ -103,7 +101,7 @@ function Cart(props) {
 
   return (
     <div>
-      {cart.length == 0 ? (
+      {cart == null ? (
         <h1>GO BUY SOMETHING!!!</h1>
       ) : (
         <div className={classes.page}>
@@ -179,5 +177,3 @@ function Cart(props) {
   );
 }
 export default Cart;
-
-

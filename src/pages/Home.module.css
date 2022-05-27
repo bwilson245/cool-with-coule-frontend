@@ -83,6 +83,8 @@
     border: solid 2px;
     background-color: white;
     border-radius: 30px;
+    max-width: 500px;
+    width: 100%;
 }
 .item .desc {
     max-width: 400px;
