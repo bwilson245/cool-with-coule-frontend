@@ -33,6 +33,7 @@ function Checkout() {
     const mm = String(date.getMonth() + 1).padStart(2, '0');
     const yyyy = date.getFullYear();
     order.orderDate = mm + '/' + dd + '/' + yyyy;
+    
 
     return (
       <div>

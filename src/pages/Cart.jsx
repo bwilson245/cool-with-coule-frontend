@@ -1,8 +1,6 @@
 import classes from "./Cart.module.css";
 import { useRef, useState } from "react";
-import userEvent from "@testing-library/user-event";
-import mockCart from "./mock-cart.json";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { SwishSpinner } from "react-spinners-kit";
 import axios from "axios";
 
@@ -19,9 +17,12 @@ function Cart(props) {
   const navigate = useNavigate();
   const input = useRef();
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")));
-  const user = localStorage.getItem("customer");
   const [isLoading, setIsLoading] = useState(false);
-  const [orderPlaced, setOrderPlaced] = useState(false);
+  let customer = JSON.parse(localStorage.getItem("customer"));
+
+  const [user, setUser] = useState([])
+
+  
 
   function modItem(item, value) {
     console.log(item);
@@ -29,9 +30,9 @@ function Cart(props) {
 
     let cart = JSON.parse(localStorage.getItem("cart"));
     for (let i = 0; i < cart.length; i++) {
-      if (cart[i].name == item.name) {
+      if (cart[i].name === item.name) {
         cart[i].quantity += parseInt(value, 10);
-        if (cart[i].quantity == -1) {
+        if (cart[i].quantity === -1) {
           return null;
         }
       }
@@ -41,16 +42,16 @@ function Cart(props) {
   }
 
   function removeItem(item) {
-    console.log("test");
     let oldCart = JSON.parse(localStorage.getItem("cart"));
     let newCart = JSON.parse("[]");
     for (let i = 0; i < oldCart.length; i++) {
-      if (oldCart[i].name != item.name) {
+      if (oldCart[i].name !== item.name) {
         newCart.push(oldCart[i]);
       }
     }
     localStorage.setItem("cart", JSON.stringify(newCart));
     setCart(newCart);
+    
   }
 
   function buildOrder() {
@@ -99,9 +100,11 @@ function Cart(props) {
       });
   }
 
+  let discount = customer != null ? (1 * .9) : 1;
+
   return (
     <div>
-      {cart == null ? (
+      {cart == null || cart.length === 0 ? (
         <h1>GO BUY SOMETHING!!!</h1>
       ) : (
         <div className={classes.page}>
@@ -161,11 +164,23 @@ function Cart(props) {
             {!isLoading ? (
               <div className={classes.order_data}>
                 <p>
-                  total price : $
+                  Total: $
                   {cart.reduce(
-                    (total, item) => total + item.priceInCents * item.quantity,
+                    (total, item) =>
+                      total + item.priceInCents * item.quantity,
                     0
                   ) / 100}
+                  {customer != null ? (
+                    <p>
+                      Customer Discount: 10% <br />
+                      New Total: $
+                      {cart.reduce(
+                        (total, item) =>
+                          total + item.priceInCents * item.quantity * discount,
+                        0
+                      ) / 100}
+                    </p>
+                  ) : null}
                 </p>
                 <button onClick={buildOrder}>Submit Order</button>
               </div>
