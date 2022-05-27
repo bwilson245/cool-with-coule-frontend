@@ -35,6 +35,9 @@ function App(props) {
   const [isLoading, setIsLoading] = useState(false)
 
   function search(criteria) {
+    if (content.length > 0 && criteria == "ONLOAD") {
+      return null
+    }
     setIsLoading(true)
     productClient
       .get(criteria)
