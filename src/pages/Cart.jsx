@@ -20,6 +20,7 @@ function Cart(props) {
   const [isLoading, setIsLoading] = useState(false);
   let customer = JSON.parse(localStorage.getItem("customer"));
 
+
   function modItem(item, value) {
     console.log(item);
     console.log(value);
