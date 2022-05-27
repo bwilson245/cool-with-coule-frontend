@@ -61,14 +61,21 @@ function Home(props) {
     let btn = document.getElementById(index);
 
     for (let i = 0; i < cart.length; i++) {
-
+      if (
+        cart[i].name === product.name &&
+        cart[i].quantity >= product.quantity
+      ) {
+        // btn.innerHTML = "OUT OF STOCK";
+        // btn.disabled = true;
+        // return classes.outOfStock;
+      }
     }
     if (product.quantity <= 0) {
       btn.innerHTML = "OUT OF STOCK";
       btn.disabled = true;
-      return classes.outOfStock
+      return classes.outOfStock;
     } else {
-      return classes.btn
+      return classes.btn;
     }
   }
 
@@ -86,7 +93,7 @@ function Home(props) {
         <button
           id={index}
           className={checkStock(product, index)}
-          onClick={() => saveToCart(product, index) }
+          onClick={() => saveToCart(product, index)}
         >
           Add to Cart
         </button>
@@ -95,51 +102,49 @@ function Home(props) {
   ));
 
   return (
-    <>
-      <div className={classes.top_flex_container}>
-        <div className={classes.top_flex_left}>
-          <h1 className={classes.moto1}>Cool</h1>
-          <h1 className={classes.moto2}>With</h1>
-          <h1 className={classes.moto1}>Coule.</h1>
-          <p>Bet you never felt this cool.</p>
-          <p>Now you can, with CoolWithCoule!</p>
-          <ul>
-            <li>
-              <button
-                className={classes.bot_btn}
-                onClick={() => props.content("?name=apron")}
-              >
-                Aprons
-              </button>
-            </li>
-            <li>
-              <button
-                className={classes.bot_btn}
-                onClick={() => props.content("?name=tea towel")}
-              >
-                Tea Towels
-              </button>
-            </li>
-            <li>
-              <button
-                className={classes.bot_btn}
-                onClick={() => props.content("?name=oven mitt")}
-              >
-                Oven Mits
-              </button>
-            </li>
-          </ul>
-          <h1 className={classes.bottom_expression}>Get 'em while</h1>{" "}
-          <h2>they're hot!</h2>
-        </div>
-        <div className={classes.top_flex_right}>
-          <img
-            src={require("./components/resources/Homepage-main.png")}
-            alt="Homepage-main.png"
-          />
+    <div className={classes.main}>
+      <div className={classes.topContainer}>
+        <div className={classes.imgContainer}>
+          <div className={classes.imgContent}>
+            <div className={classes.moto}>
+              <h1 className={classes.moto1}>Cool</h1>
+              <h1 className={classes.moto2}>With</h1>
+              <h1 className={classes.moto1}>Coule.</h1>
+            </div>
+            <div className={classes.imgText}>
+              <p>Bet you never felt this cool.</p>
+              <p>Now you can, with CoolWithCoule!</p>
+            </div>
+          </div>
         </div>
       </div>
-
+      <h1 className={classes.expression}>Get 'em while</h1>{" "}
+      <h2>they're hot!</h2>
+      <div className={classes.buttons}>
+        <ul>
+          <li>
+            <button
+              onClick={() => props.content("?name=apron")}
+            >
+              Aprons
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => props.content("?name=tea towel")}
+            >
+              Tea Towels
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => props.content("?name=oven mitt")}
+            >
+              Oven Mits
+            </button>
+          </li>
+        </ul>
+      </div>
       <div className={classes.content}>
         <SwishSpinner loading={props.isLoading} className={classes.icon} />
         {productsJsx.length === 0 && !props.isLoading ? (
@@ -148,7 +153,7 @@ function Home(props) {
           productsJsx
         )}
       </div>
-    </>
+    </div>
   );
 }
 
