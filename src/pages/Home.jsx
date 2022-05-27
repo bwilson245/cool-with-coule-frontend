@@ -112,14 +112,16 @@ function Home(props) {
               <h1 className={classes.moto1}>Coule.</h1>
             </div>
             <div className={classes.imgText}>
-              <p>Bet you never felt this cool.</p>
-              <p>Now you can, with CoolWithCoule!</p>
+              <p style={{fontSize:"25px"}} >Bet you never felt this cool.</p>
+              <p style={{fontSize:"25px"}} >Now you can, with CoolWithCoule!</p>
             </div>
           </div>
         </div>
       </div>
-      <h1 className={classes.expression}>Get 'em while</h1>{" "}
-      <h2>they're hot!</h2>
+      <h1 className={classes.expression}>Get 'em while they're hot!</h1>{" "}
+      <p> Our products sell out quick! So be Coule and buy some now. Chefs from around </p>
+      <p> the world buy from us. Just ask Gordon Ramsay, he only has great things to say.</p>
+     
       <div className={classes.buttons}>
         <ul>
           <li>
