@@ -10,7 +10,7 @@ function Cart(props) {
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")));
   const user = localStorage.getItem("customer");
   const [isLoading, setIsLoading] = useState(false);
-  const [orderPlaced, setOrderPlaced] = useState(true);
+  const [orderPlaced, setOrderPlaced] = useState(false);
 
   function modItem(item, value) {
     console.log(item);
