@@ -23,11 +23,12 @@ function Login() {
 
   function searchCustomer(email, password) {
     setIsLoading(true);
-    let result = customerClient
+    customerClient
       .get("?email=" + email + "&password=" + password)
       .then((res) => {
         console.log(res);
         if (res.data.customerModel == null) {
+          setIsLoading(false);
           return alert(res.data.responseStatus.message);
         }
         localStorage.setItem(
@@ -35,11 +36,11 @@ function Login() {
           JSON.stringify(res.data.customerModel)
         );
         console.log(res.data);
-        setIsLoading(true);
+        setIsLoading(false);
         return navigate("/");
       })
       .catch((err) => {
-        setIsLoading(true);
+        setIsLoading(false);
         console.log(err);
         alert("Error");
       });

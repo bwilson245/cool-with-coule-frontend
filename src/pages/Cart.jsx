@@ -20,10 +20,6 @@ function Cart(props) {
   const [isLoading, setIsLoading] = useState(false);
   let customer = JSON.parse(localStorage.getItem("customer"));
 
-  const [user, setUser] = useState([])
-
-  
-
   function modItem(item, value) {
     console.log(item);
     console.log(value);
@@ -51,25 +47,23 @@ function Cart(props) {
     }
     localStorage.setItem("cart", JSON.stringify(newCart));
     setCart(newCart);
-    
   }
 
   function buildOrder() {
-
-    console.log(cart)
+    console.log(cart);
     let customer = JSON.parse(localStorage.getItem("customer"));
-    let id = customer.customerId
+    let id = customer.customerId;
     let order = {
-      "customerId": id,
-      "cart": []
-    }
+      customerId: id,
+      cart: [],
+    };
 
     for (let i = 0; i < cart.length; i++) {
-      order.cart.push(cart[i])
+      order.cart.push(cart[i]);
     }
 
-    console.log(order)
-    console.log(JSON.stringify(order))
+    console.log(order);
+    console.log(JSON.stringify(order));
     checkout(order);
   }
 
@@ -91,7 +85,7 @@ function Cart(props) {
         sessionStorage.setItem("order", JSON.stringify(res.data.orderModel));
         console.log(res.data);
         setIsLoading(false);
-        localStorage.removeItem("cart")
+        localStorage.removeItem("cart");
         return navigate("/checkout");
       })
       .catch((err) => {
@@ -100,7 +94,7 @@ function Cart(props) {
       });
   }
 
-  let discount = customer != null ? (1 * .9) : 1;
+  let discount = customer != null ? 1 * 0.9 : 1;
 
   return (
     <div>
@@ -111,7 +105,7 @@ function Cart(props) {
           <div className={classes.product_container}>
             <table className={classes.product_table}>
               <thead>
-                <tr>
+                <tr className={classes.navThread}>
                   <th scope="col">Item</th>
                   <th scope="col">Details</th>
                   <th scope="col">Quantity</th>
@@ -130,23 +124,35 @@ function Cart(props) {
                       />
                     </td>
                     <td>{product.description}</td>
-                    <td>
-                      <input
-                        type="number"
-                        name="quantity"
-                        min="0"
-                        ref={input}
-                        value={product.quantity}
-                        readOnly={true}
-                      />
+                    <td className={classes.quantityData}>
+                      <div className={classes.top}>
+                        <input
+                          type="number"
+                          name="quantity"
+                          min="0"
+                          ref={input}
+                          value={product.quantity}
+                          readOnly={true}
+                        />
+                        <button
+                          className={classes.incdec}
+                          onClick={() => modItem(product, -1)}
+                        >
+                          -
+                        </button>
+                        <button
+                          className={classes.incdec}
+                          onClick={() => modItem(product, 1)}
+                        >
+                          +
+                        </button>
+                      </div>
                       <button
                         className={classes.rem_btn}
                         onClick={() => removeItem(product)}
                       >
                         Remove
                       </button>
-                      <button onClick={() => modItem(product, 1)}>+</button>
-                      <button onClick={() => modItem(product, -1)}>-</button>
                     </td>
                     <td>${product.priceInCents / 100}</td>
                     <td>${(product.quantity * product.priceInCents) / 100}</td>
@@ -166,8 +172,7 @@ function Cart(props) {
                 <p>
                   Total: $
                   {cart.reduce(
-                    (total, item) =>
-                      total + item.priceInCents * item.quantity,
+                    (total, item) => total + item.priceInCents * item.quantity,
                     0
                   ) / 100}
                   {customer != null ? (
