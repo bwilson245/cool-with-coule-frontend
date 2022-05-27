@@ -1,7 +1,7 @@
 import classes from "./Signup.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { SwishSpinner } from "react-spinners-kit";
 
 const customerClient = axios.create({
@@ -31,6 +31,8 @@ function Signup() {
   const [zipcode, setZipcode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+
+
   function createCustomer() {
     setIsLoading(true)
     let customer = {
@@ -42,6 +44,7 @@ function Signup() {
       zipcode: zipcode,
       password: password,
     };
+    
     customerClient
       .post(
         `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer`,

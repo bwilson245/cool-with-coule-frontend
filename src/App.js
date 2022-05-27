@@ -34,6 +34,9 @@ function App(props) {
   const [isLoading, setIsLoading] = useState(false)
 
   function search(criteria) {
+    if (content.length > 0 && criteria == "ONLOAD") {
+      return null
+    }
     setIsLoading(true)
     productClient
       .get(criteria)
@@ -70,7 +73,7 @@ function App(props) {
     <div className={classes.main}>
       <MainNavigation className={classes.nav} content={search} />
       <Routes>
-        <Route path="/" element={<Home data={content} isLoading={isLoading} />} />
+        <Route path="/" element={<Home data={content} isLoading={isLoading} content={search} />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />

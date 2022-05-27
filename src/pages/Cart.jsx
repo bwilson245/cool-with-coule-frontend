@@ -1,14 +1,22 @@
 import classes from "./Cart.module.css";
 import { useRef, useState } from "react";
-import userEvent from "@testing-library/user-event";
-import mockCart from "./mock-cart.json";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { SwishSpinner } from "react-spinners-kit";
+import axios from "axios";
+
+const orderClient = axios.create({
+  baseURL:
+    "https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/postcheckout/%7BcustomerId%7D",
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+});
 
 function Cart(props) {
+  const navigate = useNavigate();
   const input = useRef();
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")));
-  const user = localStorage.getItem("customer");
   const [isLoading, setIsLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
 
@@ -18,9 +26,9 @@ function Cart(props) {
 
     let cart = JSON.parse(localStorage.getItem("cart"));
     for (let i = 0; i < cart.length; i++) {
-      if (cart[i].name == item.name) {
+      if (cart[i].name === item.name) {
         cart[i].quantity += parseInt(value, 10);
-        if (cart[i].quantity == -1) {
+        if (cart[i].quantity === -1) {
           return null;
         }
       }
@@ -30,25 +38,69 @@ function Cart(props) {
   }
 
   function removeItem(item) {
-    console.log("test");
     let oldCart = JSON.parse(localStorage.getItem("cart"));
     let newCart = JSON.parse("[]");
     for (let i = 0; i < oldCart.length; i++) {
-      if (oldCart[i].name != item.name) {
+      if (oldCart[i].name !== item.name) {
         newCart.push(oldCart[i]);
       }
     }
     localStorage.setItem("cart", JSON.stringify(newCart));
     setCart(newCart);
+    
   }
 
-  function saveToStorage() {
-    sessionStorage.setItem("order", JSON.stringify(cart));
+  function buildOrder() {
+
+    console.log(cart)
+    let customer = JSON.parse(localStorage.getItem("customer"));
+    let id = customer.customerId
+    let order = {
+      "customerId": id,
+      "cart": []
+    }
+
+    for (let i = 0; i < cart.length; i++) {
+      order.cart.push(cart[i])
+    }
+
+    console.log(order)
+    console.log(JSON.stringify(order))
+    checkout(order);
   }
+
+  function checkout(order) {
+    setIsLoading(true);
+    let customer = JSON.parse(localStorage.getItem("customer"));
+    orderClient
+      .post(
+        `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/postcheckout/` +
+          customer.customerId,
+        JSON.stringify(order)
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.data.orderModel == null) {
+          setIsLoading(false);
+          return alert(res.data.responseStatus.message);
+        }
+        sessionStorage.setItem("order", JSON.stringify(res.data.orderModel));
+        console.log(res.data);
+        setIsLoading(false);
+        localStorage.removeItem("cart")
+        return navigate("/checkout");
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }
+
+  let discount = customer != null ? (1 * .9) : 1;
 
   return (
     <div>
-      {cart.length == 0 ? (
+      {cart == null || cart.length === 0 ? (
         <h1>GO BUY SOMETHING!!!</h1>
       ) : (
         <div className={classes.page}>
@@ -100,28 +152,33 @@ function Cart(props) {
             </table>
           </div>
           <div className={classes.bot_data}>
-            {isLoading && !orderPlaced ? (
+            {isLoading ? (
               <div className={classes.icon}>
                 <SwishSpinner />
               </div>
             ) : null}
-            {!isLoading && orderPlaced ? (
-              <div className={classes.order_confirm}>
-                <p>Your order has been placed!</p>
-                <Link to="/order">View your order</Link>
-              </div>
-            ) : null}
-            {!isLoading && !orderPlaced ? (
+            {!isLoading ? (
               <div className={classes.order_data}>
                 <p>
-                  total price : $
+                  Total: $
                   {cart.reduce(
-                    (total, item) => total + item.priceInCents * item.quantity,
+                    (total, item) =>
+                      total + item.priceInCents * item.quantity,
                     0
                   ) / 100}
+                  {customer != null ? (
+                    <p>
+                      Customer Discount: 10% <br />
+                      New Total: $
+                      {cart.reduce(
+                        (total, item) =>
+                          total + item.priceInCents * item.quantity * discount,
+                        0
+                      ) / 100}
+                    </p>
+                  ) : null}
                 </p>
-                <Link to="/checkout"></Link>
-                <button onClick={saveToStorage}>Submit Order</button>
+                <button onClick={buildOrder}>Submit Order</button>
               </div>
             ) : null}
           </div>
@@ -131,5 +188,3 @@ function Cart(props) {
   );
 }
 export default Cart;
-
-

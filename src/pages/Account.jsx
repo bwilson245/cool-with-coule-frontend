@@ -55,6 +55,18 @@ function Account() {
             }
         })
 
+        const updateCustomer = {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({title: 'PUTCustomerRequest'})
+        };
+
+        fetch('https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer/{id}', updateCustomer)
+        .then(Response => Response.json())
+        .then(data => this.setState
+            ({id:data.id}))
+        }
+
         // let customerInfo = JSON.parse(localStorage.getCustomer("customer"));
         // for (let i = 0; i < customer.length; i++) {
         //   if (customer[i].name == customerInfo.name) {
@@ -88,7 +100,7 @@ function Account() {
 
         //  )
         
-    }
+    
     return (
         <>
       <div className={classes.card}>

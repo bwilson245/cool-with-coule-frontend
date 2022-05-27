@@ -1,51 +1,99 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import classes from "./Home.module.css";
 import { SwishSpinner } from "react-spinners-kit";
-import axios from "axios";
-
-const productClient = axios.create({
-  baseURL: `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/products`,
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-});
 
 function Home(props) {
-  
-  function saveToCart(product) {
-    var cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+  useEffect(() => {
+    props.content("ONLOAD");
+  }, []);
+
+  function saveToCart(product, index) {
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
     let productExists = false;
+    let cartIndex;
     for (let i = 0; i < cart.length; i++) {
-      if (cart[i].name == product.name) {
+      if (cart[i].name === product.name) {
         console.log("cart: ", cart[i]);
         cart[i].quantity += 1;
         productExists = true;
+        cartIndex = i;
         console.log("cart after: ", cart[i]);
       }
     }
     if (!productExists) {
-      product.quantity = 1;
-      cart.push(product);
+      let item = {
+        description: product.description,
+        imageUrl: product.imageUrl,
+        name: product.name,
+        priceInCents: product.priceInCents,
+        quantity: 1,
+        type: product.type,
+        upcCode: product.upcCode,
+      };
+      cart.push(item);
     }
     localStorage.setItem("cart", JSON.stringify(cart));
+    product.quantity -= 1;
+
+    let btn = document.getElementById(index);
+    if (product.quantity <= 0) {
+      btn.className = classes.outOfStock;
+      btn.innerHTML = "OUT OF STOCK";
+      btn.disabled = true;
+    } else if (
+      cartIndex != null &&
+      cart[cartIndex].quantity >= product.quantity
+    ) {
+      btn.className = classes.outOfStock;
+      btn.innerHTML = "OUT OF STOCK";
+      btn.disabled = true;
+    } else {
+      btn.className = classes.btn;
+    }
+
+    console.log(props.data);
   }
 
+  function checkStock(product, index) {
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    let btn = document.getElementById(index);
 
-  let productsJsx = props.data.map((product) => (
+    for (let i = 0; i < cart.length; i++) {
+
+    }
+    if (product.quantity <= 0) {
+      btn.innerHTML = "OUT OF STOCK";
+      btn.disabled = true;
+      return classes.outOfStock
+    } else {
+      return classes.btn
+    }
+  }
+
+  let productsJsx = props.data.map((product, index) => (
     <div key={product.name} className={classes.item}>
       <div className={classes.img}>
-        <img src={product.imageUrl} height="250" />
+        <img src={product.imageUrl} alt={product.name} height="250" />
       </div>
       <h3 className={classes.name}>{product.name}</h3>
       <br />
-      <div className={classes.desc}>{product.description}</div>
-      <div className={classes.price}>${product.priceInCents / 100}</div>
-      <button className={classes.btn} onClick={() => saveToCart(product)}>
-        Add to Cart
-      </button>
+
+      <div>
+        <div className={classes.desc}>{product.description}</div>
+        <div className={classes.price}>${product.priceInCents / 100}</div>
+        <button
+          id={index}
+          className={checkStock(product, index)}
+          onClick={() => saveToCart(product, index) }
+        >
+          Add to Cart
+        </button>
+      </div>
     </div>
   ));
+
   return (
     <>
       <div className={classes.top_flex_container}>
@@ -87,14 +135,18 @@ function Home(props) {
         <div className={classes.top_flex_right}>
           <img
             src={require("./components/resources/Homepage-main.png")}
-            alt="fail"
+            alt="Homepage-main.png"
           />
         </div>
       </div>
 
       <div className={classes.content}>
         <SwishSpinner loading={props.isLoading} className={classes.icon} />
-        {productsJsx}
+        {productsJsx.length === 0 && !props.isLoading ? (
+          <h3>no results found.</h3>
+        ) : (
+          productsJsx
+        )}
       </div>
     </>
   );
