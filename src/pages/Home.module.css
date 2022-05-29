@@ -8,7 +8,7 @@
 .topContainer {
   background-image: url("components/resources/BG_IMG.png");
   background-repeat: no-repeat;
-  height: 400px;
+  height: 700px;
   max-width: 1800px;
   width: 100%;
   justify-content: center;
@@ -28,7 +28,6 @@
   flex-direction: row;
   justify-content: center;
   text-align: center;
-  
 }
 .moto {
   display: flex;
