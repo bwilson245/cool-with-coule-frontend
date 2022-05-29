@@ -1,8 +1,9 @@
-import classes from "./Cart.module.css";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SwishSpinner } from "react-spinners-kit";
 import axios from "axios";
+
+import classes from "./Cart.module.css";
 
 const orderClient = axios.create({
   baseURL:
@@ -18,13 +19,24 @@ function Cart(props) {
   const input = useRef();
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")));
   const [isLoading, setIsLoading] = useState(false);
+
+  let withoutDiscount;
+  let withDiscount;
+  if (cart != null) {
+    let discount = 0.9;
+    let total =
+      cart.reduce(
+        (total, item) => total + item.priceInCents * item.quantity,
+        0
+      ) / 100.0;
+    withoutDiscount = total.toFixed(2);
+    withDiscount = total * discount;
+    withDiscount = withDiscount.toFixed(2);
+  }
+
   let customer = JSON.parse(localStorage.getItem("customer"));
 
-
   function modItem(item, value) {
-    console.log(item);
-    console.log(value);
-
     let cart = JSON.parse(localStorage.getItem("cart"));
     for (let i = 0; i < cart.length; i++) {
       if (cart[i].name === item.name) {
@@ -51,7 +63,6 @@ function Cart(props) {
   }
 
   function buildOrder() {
-    console.log(cart);
     let customer = JSON.parse(localStorage.getItem("customer"));
     let id = customer.customerId;
     let order = {
@@ -62,8 +73,6 @@ function Cart(props) {
     for (let i = 0; i < cart.length; i++) {
       order.cart.push(cart[i]);
     }
-
-    console.log(order);
     console.log(JSON.stringify(order));
     checkout(order);
   }
@@ -84,7 +93,6 @@ function Cart(props) {
           return alert(res.data.responseStatus.message);
         }
         sessionStorage.setItem("order", JSON.stringify(res.data.orderModel));
-        console.log(res.data);
         setIsLoading(false);
         localStorage.removeItem("cart");
         return navigate("/checkout");
@@ -94,8 +102,6 @@ function Cart(props) {
         setIsLoading(false);
       });
   }
-
-  let discount = customer != null ? 1 * 0.9 : 1;
 
   return (
     <div>
@@ -116,7 +122,7 @@ function Cart(props) {
               </thead>
               <tbody>
                 {cart.map((product) => (
-                  <tr key={product.name}>
+                  <tr className={classes.row} key={product.name}>
                     <td>
                       <img
                         className={classes.table_img}
@@ -155,8 +161,12 @@ function Cart(props) {
                         Remove
                       </button>
                     </td>
-                    <td>${product.priceInCents / 100}</td>
-                    <td>${(product.quantity * product.priceInCents) / 100}</td>
+                    <td className={classes.price}>
+                      ${product.priceInCents / 100}
+                    </td>
+                    <td className={classes.price}>
+                      ${(product.quantity * product.priceInCents) / 100}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -165,30 +175,25 @@ function Cart(props) {
           <div className={classes.bot_data}>
             {isLoading ? (
               <div className={classes.icon}>
-                <SwishSpinner />
+                <SwishSpinner className={classes.spinner} />
+                <p>Submitting your order</p>
               </div>
             ) : null}
             {!isLoading ? (
               <div className={classes.order_data}>
-                <p>
-                  Total: $
-                  {cart.reduce(
-                    (total, item) => total + item.priceInCents * item.quantity,
-                    0
-                  ) / 100}
+                <div>
+                  <p>Total: ${withoutDiscount}</p>
+
                   {customer != null ? (
                     <p>
                       Customer Discount: 10% <br />
-                      New Total: $
-                      {cart.reduce(
-                        (total, item) =>
-                          total + item.priceInCents * item.quantity * discount,
-                        0
-                      ) / 100}
+                      New Total: ${withDiscount}
                     </p>
                   ) : null}
-                </p>
-                <button onClick={buildOrder}>Submit Order</button>
+                </div>
+                <button className={classes.submit} onClick={buildOrder}>
+                  Submit Order
+                </button>
               </div>
             ) : null}
           </div>

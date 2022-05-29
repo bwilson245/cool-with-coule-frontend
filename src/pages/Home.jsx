@@ -3,23 +3,23 @@ import classes from "./Home.module.css";
 import { SwishSpinner } from "react-spinners-kit";
 
 function Home(props) {
+  const [render, reRender] = useState(0);
+  
   let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
   useEffect(() => {
     props.content("ONLOAD");
-  }, []);
+    console.log("render");
+  }, [cart]);
 
   function saveToCart(product, index) {
-    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
     let productExists = false;
-    let cartIndex;
     for (let i = 0; i < cart.length; i++) {
       if (cart[i].name === product.name) {
-        console.log("cart: ", cart[i]);
-        cart[i].quantity += 1;
-        productExists = true;
-        cartIndex = i;
-        console.log("cart after: ", cart[i]);
+        if (cart[i].quantity < product.quantity) {
+          cart[i].quantity += 1;
+          productExists = true;
+        }
       }
     }
     if (!productExists) {
@@ -35,47 +35,27 @@ function Home(props) {
       cart.push(item);
     }
     localStorage.setItem("cart", JSON.stringify(cart));
-    product.quantity -= 1;
+    checkStock(product, index);
+    reRender(render + 1);
+  }
 
+  function checkStock(product, index) {
     let btn = document.getElementById(index);
-    if (product.quantity <= 0) {
-      btn.className = classes.outOfStock;
-      btn.innerHTML = "OUT OF STOCK";
-      btn.disabled = true;
-    } else if (
-      cartIndex != null &&
-      cart[cartIndex].quantity >= product.quantity
-    ) {
+    let cartItem;
+    for (let i = 0; i < cart.length; i++) {
+      if (cart[i].name === product.name) {
+        cartItem = cart[i];
+      }
+    }
+    console.log("product.quantity: " + product.quantity);
+    console.log("cartItem.quantity: " + cartItem.quantity);
+
+    if (product.quantity <= cartItem.quantity) {
       btn.className = classes.outOfStock;
       btn.innerHTML = "OUT OF STOCK";
       btn.disabled = true;
     } else {
       btn.className = classes.btn;
-    }
-
-    console.log(props.data);
-  }
-
-  function checkStock(product, index) {
-    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    let btn = document.getElementById(index);
-
-    for (let i = 0; i < cart.length; i++) {
-      if (
-        cart[i].name === product.name &&
-        cart[i].quantity >= product.quantity
-      ) {
-        // btn.innerHTML = "OUT OF STOCK";
-        // btn.disabled = true;
-        // return classes.outOfStock;
-      }
-    }
-    if (product.quantity <= 0) {
-      btn.innerHTML = "OUT OF STOCK";
-      btn.disabled = true;
-      return classes.outOfStock;
-    } else {
-      return classes.btn;
     }
   }
 
@@ -86,13 +66,12 @@ function Home(props) {
       </div>
       <h3 className={classes.name}>{product.name}</h3>
       <br />
-
       <div>
         <div className={classes.desc}>{product.description}</div>
         <div className={classes.price}>${product.priceInCents / 100}</div>
         <button
           id={index}
-          className={checkStock(product, index)}
+          className={classes.btn}
           onClick={() => saveToCart(product, index)}
         >
           Add to Cart
@@ -123,23 +102,15 @@ function Home(props) {
       <div className={classes.buttons}>
         <ul>
           <li>
-            <button
-              onClick={() => props.content("?name=apron")}
-            >
-              Aprons
-            </button>
+            <button onClick={() => props.content("?name=apron")}>Aprons</button>
           </li>
           <li>
-            <button
-              onClick={() => props.content("?name=tea towel")}
-            >
+            <button onClick={() => props.content("?name=tea towel")}>
               Tea Towels
             </button>
           </li>
           <li>
-            <button
-              onClick={() => props.content("?name=oven mitt")}
-            >
+            <button onClick={() => props.content("?name=oven mitt")}>
               Oven Mits
             </button>
           </li>

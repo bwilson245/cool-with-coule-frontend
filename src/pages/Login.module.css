@@ -72,15 +72,6 @@ input[type="text"] {
 .link:hover {
     color: blue;
 }
-
-@keyframes spinner {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
 .icon {
     margin-top: 30px;
     

@@ -20,6 +20,10 @@ table.product_table {
   width: 100%;
   margin-top: 25px;
   margin-bottom: 25px;
+  box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.7);
+}
+.row {
+  border: 2px solid black;
 }
 img.table_img {
   width: 80px;
@@ -35,9 +39,14 @@ td {
   margin-top: 33px;
 }
 .icon {
+  display: flex;
+  flex-direction: column;
   margin: auto;
   margin-top: 20px;
   margin-bottom: 20px;
+}
+.icon p {
+  margin-top: 30px;
 }
 .bot_data {
   display: flex;
@@ -60,7 +69,15 @@ td {
 }
 .order_data p {
   margin-right: 100px;
+  font-size: large;
 }
+.submit {
+  background-color: rgb(68, 194, 54);
+  border-radius: 4px;
+  padding: 5px;
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.7);
+}
+
 .quantityData {
   display: flex;
   flex-direction: column;
@@ -68,6 +85,7 @@ td {
   width: 100%;
   justify-content: center;
   align-items: center;
+  margin-top: 20px;
 }
 .quantityData .top {
   display: flex;
@@ -92,7 +110,7 @@ td {
 }
 .quantityData .rem_btn {
   border: solid 2x black;
-  background-color: #ff6464;
+  background-color: #f04f4f;
   border-radius: 5px;
   width: 100%;
 }

@@ -1,25 +1,27 @@
+import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
+
 import classes from "./MainNavigation.module.css";
 import "./resources/Logo-small.png";
-import { useRef, useState } from "react";
-import React from "react";
 
 
-function MainNavigation(props) {
+function MainNavigation(props, { loggedIn }) {
   const input = useRef();
   const [criteria, setCriteria] = useState("");
+  const [value, setValue] = useState(0);
 
   let customer = JSON.parse(localStorage.getItem("customer"));
 
   function signout() {
+    console.log("test");
     if (customer != null) {
       localStorage.removeItem("customer");
+      setValue(value + 1);
+      props.setLoggedIn(false);
     } else {
       console.log("error");
     }
-    this.setState();
   }
-
 
   return (
     <header className={classes.header}>
@@ -51,14 +53,15 @@ function MainNavigation(props) {
         ></input>
       </div>
       <ul>
-        {customer != null ? (
+        {props.loggedIn ? (
           <div className={classes.opt}>
             <li>
               <h5>
                 Welcome Back, <br />
                 {customer.name}! <br />
-          
-                <Link className={classes.account} to="/account">Go to account</Link>
+                <Link className={classes.account} to="/account">
+                  Go to account
+                </Link>
               </h5>
             </li>
             <li>

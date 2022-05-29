@@ -1,32 +1,39 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import classes from "./MainFooter.module.css";
 import "./resources/Logo-small.png";
-import { useRef } from "react";
 
-function MainFooter() {
+function MainFooter(props) {
+  const [render, reRender] = useState(0);
+
+  function update() {
+    props.reRender(render + 1);
+  }
+
+  function randomGif() {}
   return (
     <footer className={classes.footer}>
       <div className={classes.top}>
         <ul>
           <li>
-            <a className={classes.link} href="https://www.twitter.com/">
+            <Link to={"/faq"} onClick={update}>
               Twitter
-            </a>
+            </Link>
           </li>
           <li>
-            <a className={classes.link} href="https://www.facebook.com/">
+            <Link to={"/faq"} onClick={update}>
               Facebook
-            </a>
+            </Link>
           </li>
           <li>
-            <a className={classes.link} href="https://www.google.com/">
+            <Link to={"/faq"} onClick={update}>
               Google+
-            </a>
+            </Link>
           </li>
           <li>
-            <a className={classes.link} href="https://www.instagram.com/">
+            <Link to={"/faq"} onClick={update}>
               Instagram
-            </a>
+            </Link>
           </li>
         </ul>
       </div>
@@ -34,38 +41,38 @@ function MainFooter() {
         <div className={classes.left}>
           <ul>
             <li>
-              <a className={classes.link} href="#">
+              <Link to={"/faq"} onClick={update}>
                 Contact
-              </a>
+              </Link>
             </li>
             <li>
-              <a className={classes.link} href="#">
+              <Link to={"/faq"} onClick={update}>
                 About Us
-              </a>
+              </Link>
             </li>
             <li>
-              <a className={classes.link} href="#">
+              <Link to={"/faq"} onClick={update}>
                 Terms & Conditions
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
         <div className={classes.right}>
           <ul>
             <li>
-              <a className={classes.link} href="#">
+              <Link to={"/faq"} onClick={update}>
                 Careers
-              </a>
+              </Link>
             </li>
             <li>
-              <a className={classes.link} href="#">
+              <Link to={"/faq"} onClick={update}>
                 Change Country
-              </a>
+              </Link>
             </li>
             <li>
-              <a className={classes.link} href="#">
+              <Link to={"/faq"} onClick={update}>
                 FAQ
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
