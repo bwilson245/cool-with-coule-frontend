@@ -1,9 +1,9 @@
-import classes from "./Login.module.css";
-import { Link } from "react-router-dom";
-import axios from "axios";
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SwishSpinner } from "react-spinners-kit";
+import axios from "axios";
+
+import classes from "./Login.module.css";
 
 const customerClient = axios.create({
   baseURL: `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer`,
@@ -13,13 +13,14 @@ const customerClient = axios.create({
   },
 });
 
-function Login() {
+function Login(props) {
   const navigate = useNavigate();
   let emailInput = useRef();
   let passwordInput = useRef();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [render, reRender] = useState(0)
 
   function searchCustomer(email, password) {
     setIsLoading(true);
@@ -35,16 +36,19 @@ function Login() {
           "customer",
           JSON.stringify(res.data.customerModel)
         );
-        console.log(res.data);
         setIsLoading(false);
+        props.setLoggedIn(true);
+        reRender(render + 1);
         return navigate("/");
       })
       .catch((err) => {
         setIsLoading(false);
         console.log(err);
+        reRender(render + 1);
         alert("Error");
       });
   }
+
   return (
     <>
       <div className={classes.card}>
@@ -69,7 +73,7 @@ function Login() {
         <div className={classes.btn}>
           <button
             className={classes.signin}
-            onClick={() => searchCustomer(email, password)}
+            onClick={() => searchCustomer(email, password) && props.login(true)}
             disabled={isLoading}
           >
             Sign in

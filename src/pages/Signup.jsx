@@ -1,8 +1,9 @@
-import classes from "./Signup.module.css";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useRef, useState, useEffect } from "react";
 import { SwishSpinner } from "react-spinners-kit";
+import axios from "axios";
+
+import classes from "./Signup.module.css";
 
 const customerClient = axios.create({
   baseURL: `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer`,
@@ -12,7 +13,7 @@ const customerClient = axios.create({
   },
 });
 
-function Signup() {
+function Signup(props) {
   const navigate = useNavigate();
   let nameInput = useRef();
   let emailInput = useRef();
@@ -30,11 +31,10 @@ function Signup() {
   const [state, setState] = useState("");
   const [zipcode, setZipcode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-
+  const [render, reRender] = useState(0)
 
   function createCustomer() {
-    setIsLoading(true)
+    setIsLoading(true);
     let customer = {
       email: email,
       name: name,
@@ -44,7 +44,7 @@ function Signup() {
       zipcode: zipcode,
       password: password,
     };
-    
+
     customerClient
       .post(
         `https://xqai7ofhql.execute-api.us-west-2.amazonaws.com/prod/customer`,
@@ -60,13 +60,15 @@ function Signup() {
           "customer",
           JSON.stringify(res.data.customerModel)
         );
-        console.log(res.data);
         setIsLoading(false);
+        props.setLoggedIn(true);
+        reRender(render + 1)
         return navigate("/");
       })
       .catch((err) => {
         console.log(err);
         setIsLoading(false);
+        reRender(render + 1);
       });
   }
 
