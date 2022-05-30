@@ -64,6 +64,9 @@ function Cart(props) {
 
   function buildOrder() {
     let customer = JSON.parse(localStorage.getItem("customer"));
+    if (customer == null) {
+      return alert("Must be logged in.")
+    }
     let id = customer.customerId;
     let order = {
       customerId: id,
