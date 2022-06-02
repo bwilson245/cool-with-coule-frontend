@@ -105,8 +105,9 @@ function Account(props) {
       .catch((err) => {
         console.log(err);
         setIsLoading(false);
-        alert("Something went wrong, try again");
+        // alert("Something went wrong, try again");
         reRender(render + 1)
+        return navigate("/");
       });
   }
 
